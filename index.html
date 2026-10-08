@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A Little Universe</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{
+background:#05050d;color:white;
+font-family:Arial,sans-serif;
+touch-action:manipulation
+}
+
+/* ===== MOVING AURORA ===== */
+
+.sky{
+position:fixed;
+inset:-40%;
+background:
+radial-gradient(ellipse at 20% 25%,#ff4da855 0,transparent 28%),
+radial-gradient(ellipse at 75% 20%,#6875ff66 0,transparent 30%),
+radial-gradient(ellipse at 45% 70%,#36d9c855 0,transparent 30%),
+radial-gradient(ellipse at 85% 75%,#b14dff55 0,transparent 28%);
+filter:blur(55px);
+animation:sky 18s ease-in-out infinite alternate;
+}
+
+@keyframes sky{
+0%{transform:rotate(-5deg) scale(1)}
+50%{transform:rotate(7deg) scale(1.12)}
+100%{transform:rotate(-3deg) scale(1.05)}
+}
+
+.vignette{
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at center,transparent 25%,#05050dcc 100%);
+z-index:1;
+}
+
+/* ===== STARS ===== */
+
+.stars{
+position:fixed;
+inset:0;
+z-index:2;
+}
+
+.stars i{
+position:absolute;
+width:2px;height:2px;
+border-radius:50%;
+background:white;
+box-shadow:0 0 8px white;
+animation:star 3s ease-in-out infinite alternate;
+}
+
+@keyframes star{
+to{opacity:.15;transform:scale(2)}
+}
+
+/* ===== FLOATING ORBS ===== */
+
+.orbs{
+position:fixed;
+inset:0;
+overflow:hidden;
+z-index:3;
+pointer-events:none;
+}
+
+.orb{
+position:absolute;
+bottom:-100px;
+border-radius:50%;
+border:1px solid #ffffff30;
+background:#ffffff08;
+box-shadow:
+inset 0 0 15px #ffffff0c,
+0 0 25px #ffffff12;
+animation:orb linear infinite;
+}
+
+@keyframes orb{
+0%{
+transform:translate(0,0) scale(.5);
+opacity:0;
+}
+12%{opacity:.5}
+25%{
+transform:translate(35px,-25vh) scale(1);
+}
+50%{
+transform:translate(-40px,-55vh) scale(.8);
+}
+75%{
+transform:translate(50px,-85vh) scale(1.2);
+}
+100%{
+transform:translate(-20px,-120vh) scale(.6);
+opacity:0;
+}
+}
+
+/* ===== MAIN ===== */
+
+.stage{
+position:relative;
+width:100%;
+height:100vh;
+z-index:10;
+}
+
+.scene{
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:30px;
+text-align:center;
+
+opacity:0;
+visibility:hidden;
+transform:scale(.88) translateY(20px);
+filter:blur(12px);
+
+transition:
+opacity 1s ease,
+transform 1.2s cubic-bezier(.16,1,.3,1),
+filter 1s ease,
+visibility 1s;
+}
+
+.scene.on{
+opacity:1;
+visibility:visible;
+transform:scale(1) translateY(0);
+filter:blur(0);
+}
+
+.inner{
+width:min(700px,100%);
+}
+
+/* ===== TYPOGRAPHY ===== */
+
+.kicker{
+font-size:9px;
+letter-spacing:6px;
+text-transform:uppercase;
+color:#c9c9dc;
+opacity:.65;
+margin-bottom:25px;
+
+animation:rise .9s both;
+}
+
+.scene:not(.on) .kicker,
+.scene:not(.on) h1,
+.scene:not(.on) p{
+animation:none;
+}
+
+h1{
+font-family:Georgia,serif;
+font-weight:400;
+font-size:clamp(42px,11vw,78px);
+line-height:1.08;
+
+background:
+linear-gradient(
+120deg,
+#fff,
+#ffd1e9,
+#c9d3ff,
+#fff
+);
+background-size:300%;
+-webkit-background-clip:text;
+color:transparent;
+
+animation:
+rise 1s .1s both,
+shine 7s linear infinite;
+}
+
+p{
+margin:28px auto 0;
+max-width:600px;
+font-size:clamp(15px,4vw,20px);
+line-height:1.9;
+color:#dedee9;
+
+animation:rise 1s .25s both;
+}
+
+@keyframes rise{
+from{
+opacity:0;
+transform:translateY(25px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+@keyframes shine{
+to{background-position:300% center}
+}
+
+.rule{
+width:45px;
+height:1px;
+margin:28px auto;
+background:linear-gradient(
+90deg,transparent,#fff,transparent
+);
+opacity:.55;
+}
+
+.big{
+font-family:Georgia,serif;
+font-size:clamp(23px,6vw,38px);
+line-height:1.45;
+color:#fff;
+}
+
+/* ===== START ===== */
+
+.start{
+position:fixed;
+inset:0;
+z-index:100;
+
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:30px;
+
+background:#05050d;
+
+transition:1s ease;
+}
+
+.start.hide{
+opacity:0;
+visibility:hidden;
+}
+
+.start small{
+font-size:9px;
+letter-spacing:6px;
+color:#9999ae;
+}
+
+.start h2{
+font-family:Georgia,serif;
+font-weight:400;
+font-size:clamp(48px,14vw,88px);
+margin:22px 0;
+
+background:linear-gradient(
+120deg,#fff,#ffb7dd,#9faeff
+);
+-webkit-background-clip:text;
+color:transparent;
+}
+
+.start p{
+font-size:12px;
+color:#9999ae;
+margin-bottom:32px;
+}
+
+.start button{
+border:1px solid #ffffff35;
+background:#ffffff0b;
+color:white;
+border-radius:100px;
+padding:15px 30px;
+letter-spacing:3px;
+font-size:10px;
+box-shadow:0 0 35px #927cff22;
+}
+
+/* little breathing glow */
+
+.breath{
+position:absolute;
+width:180px;
+height:180px;
+border-radius:50%;
+background:#927cff18;
+filter:blur(35px);
+animation:breathe 4s ease-in-out infinite;
+}
+
+@keyframes breathe{
+50%{transform:scale(1.5);opacity:.4}
+}
+</style>
+</head>
+
+<body>
+
+<!-- AURORA -->
+<div class="sky"></div>
+<div class="vignette"></div>
+
+<!-- STARS -->
+<div class="stars">
+<i style="left:7%;top:14%;animation-delay:.2s"></i>
+<i style="left:17%;top:62%;animation-delay:1s"></i>
+<i style="left:29%;top:31%;animation-delay:2s"></i>
+<i style="left:42%;top:11%;animation-delay:.7s"></i>
+<i style="left:54%;top:76%;animation-delay:1.5s"></i>
+<i style="left:67%;top:27%;animation-delay:.4s"></i>
+<i style="left:78%;top:67%;animation-delay:2.2s"></i>
+<i style="left:91%;top:19%;animation-delay:1.2s"></i>
+<i style="left:95%;top:82%;animation-delay:.8s"></i>
+</div>
+
+<!-- FLOATING ORBS -->
+<div class="orbs">
+<span class="orb"
+style="left:4%;width:38px;height:38px;animation-duration:13s"></span>
+
+<span class="orb"
+style="left:15%;width:18px;height:18px;animation-duration:17s;animation-delay:3s"></span>
+
+<span class="orb"
+style="left:27%;width:55px;height:55px;animation-duration:15s;animation-delay:1s"></span>
+
+<span class="orb"
+style="left:42%;width:25px;height:25px;animation-duration:19s;animation-delay:5s"></span>
+
+<span class="orb"
+style="left:57%;width:42px;height:42px;animation-duration:14s;animation-delay:2s"></span>
+
+<span class="orb"
+style="left:71%;width:20px;height:20px;animation-duration:18s;animation-delay:7s"></span>
+
+<span class="orb"
+style="left:83%;width:50px;height:50px;animation-duration:16s;animation-delay:4s"></span>
+
+<span class="orb"
+style="left:94%;width:24px;height:24px;animation-duration:20s;animation-delay:6s"></span>
+</div>
+
+<!-- MUSIC -->
+<audio id="music" loop>
+<source src="dream.mp3" type="audio/mpeg">
+</audio>
+
+<!-- START -->
+<div class="start" id="start">
+<div class="breath"></div>
+
+<div style="position:relative;z-index:2">
+<small>A LITTLE UNIVERSE</small>
+
+<h2>Press<br>and feel.</h2>
+
+<p>Nothing to read. Just let it unfold.</p>
+
+<button onclick="begin()">BEGIN ✦</button>
+</div>
+</div>
+
+<!-- PRESENTATION -->
+<div class="stage" onclick="next()">
+
+<section class="scene on">
+<div class="inner">
+<div class="kicker">01 · Somewhere</div>
+<h1>Maybe some moments<br>are meant to be felt.</h1>
+<div class="rule"></div>
+<p>
+Not understood.<br>
+Not explained.<br>
+Just felt.
+</p>
+</div>
+</section>
+
+<section class="scene">
+<div class="inner">
+<div class="kicker">02 · Slowly</div>
+<h1>And sometimes<br>everything gets quiet.</h1>
+<p>
+The world keeps moving,
+but for a moment,
+you don't feel the need to chase it.
+</p>
+</div>
+</section>
+
+<section class="scene">
+<div class="inner">
+<div class="kicker">03 · A thought</div>
+<h1>There is beauty<br>in not having all the answers.</h1>
+<div class="rule"></div>
+<p>
+Some things can simply exist
+without being explained.
+</p>
+</div>
+</section>
+
+<section class="scene">
+<div class="inner">
+<div class="kicker">04 · Tonight</div>
+<h1>Let everything<br>slow down.</h1>
+<p class="big">
+Breathe.<br>
+Look around.<br>
+Stay for a while.
+</p>
+</div>
+</section>
+
+<section class="scene">
+<div class="inner">
+<div class="kicker">05 · Remember</div>
+<h1>You don't have to<br>carry everything.</h1>
+<p>
+Some weight can be put down.
+Some thoughts can wait.
+Some days simply need to pass.
+</p>
+</div>
+</section>
+
+<section class="scene">
+<div class="inner">
+<div class="kicker">06 · Somewhere between</div>
+<h1>Maybe peace<br>isn't silence.</h1>
+<div class="rule"></div>
+<p>
+Maybe it is simply finding
+a moment where your mind
+doesn't have to fight anything.
+</p>
+</div>
+</section>
+
+<section class="scene">
+<div class="inner">
+<div class="kicker">07 · A little reminder</div>
+<h1>Keep the things<br>that make you feel alive.</h1>
+<p>
+The music.<br>
+The memories.<br>
+The little conversations.<br>
+The quiet moments.
+</p>
+</div>
+</section>
+
+<section class="scene">
+<div class="inner">
+<div class="kicker">08 · And then</div>
+<h1>Let the moment<br>be enough.</h1>
+<div class="rule"></div>
+<p class="big">
+No explanation.<br>
+No expectation.<br>
+Just this moment.
+</p>
+</div>
+</section>
+
+<section class="scene">
+<div class="inner">
+<div class="kicker">09 · Finally</div>
+<h1>Somewhere in all<br>the noise...</h1>
+<p>
+there are still little pieces
+of peace waiting to be noticed.
+</p>
+</div>
+</section>
+
+<section class="scene">
+<div class="inner">
+<div class="kicker">10 · That's it</div>
+<h1>Stay soft.<br>Stay curious.<br>Keep going.</h1>
+<div class="rule"></div>
+<p>
+The universe is still unfolding.
+</p>
+</div>
+</section>
+
+</div>
+
+<script>
+const scenes=document.querySelectorAll(".scene");
+const start=document.getElementById("start");
+const music=document.getElementById("music");
+
+let current=0;
+let started=false;
+
+function begin(){
+started=true;
+start.classList.add("hide");
+
+music.volume=.65;
+music.play().catch(()=>{});
+}
+
+function next(){
+
+if(!started)return;
+
+current++;
+
+if(current>=scenes.length)
+current=0;
+
+scenes.forEach(s=>s.classList.remove("on"));
+scenes[current].classList.add("on");
+}
+</script>
+
+</body>
+</html>
